@@ -25,6 +25,23 @@ Additionally: Figure/Table crops saved under `assets/<doc_id>/...` and served vi
 
 ## Quickstart
 
+(Optional) Copy env template:
+```bash
+cp .env.example .env
+```
+
+
+(Windows users can just create `.env` manually.)
+
+### 6D) Commit + push
+Run:
+
+```powershell
+git add app/main.py requirements.txt README.md
+git commit -m "Config: load env vars via python-dotenv"
+git push
+```
+
 ### 1) Start GraphDB
 ```bash
 docker compose up -d
@@ -49,9 +66,10 @@ pip install -r requirements.txt
 
 ### 3) Run API
 
-```bash
-uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
-```
+### Run API (recommended)
+**Windows (PowerShell):**
+```powershell
+.\scripts\dev.ps1
 
 Swagger: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
