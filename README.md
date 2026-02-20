@@ -1,3 +1,8 @@
+![Python](https://img.shields.io/badge/Python-3.13%2B-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-API-green)
+![GraphDB](https://img.shields.io/badge/GraphDB-knowledge%20graph-orange)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
+
 # Scientific Document AI + Knowledge Graph Pipeline (Layout-Aware + RDF/SPARQL + Serving)
 
 End-to-end pipeline for scientific PDFs:
