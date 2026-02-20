@@ -1,0 +1,19 @@
+# Python
+.venv/
+.venv_layout/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# OS/editor
+.vscode/
+.DS_Store
+
+# Local/runtime
+assets/
+tmp*/
+*.log
+
+# Env
+.env
