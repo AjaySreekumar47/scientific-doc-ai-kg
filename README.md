@@ -32,16 +32,36 @@ Additionally: Figure/Table crops saved under `assets/<doc_id>/...` and served vi
 cp .env.example .env
 ```
 
-
 (Windows users can just create `.env` manually.)
 
-### 6D) Commit + push
-Run:
+## Demo (5 minutes)
 
+1) Start GraphDB:
+```bash
+docker compose up -d
+```
+
+2) Run API:
 ```powershell
-git add app/main.py requirements.txt README.md
-git commit -m "Config: load env vars via python-dotenv"
-git push
+.\scripts\dev.ps1
+```
+
+3) Ingest a PDF:
+
+- Open http://127.0.0.1:8000/docs
+
+- POST /ingest_to_graphdb → upload a research paper PDF
+
+- Copy document_id and (optionally) a figure_id / table_id
+
+4) View a figure crop:
+GET /docs/{doc_id}/figures/{figure_id}/image
+
+5) Run a SPARQL query:
+POST /sparql with:
+
+```json
+{ "query": "PREFIX ex: <http://example.org/schema/> SELECT ?d ?fn WHERE { ?d a ex:Document ; ex:filename ?fn . } LIMIT 10" }
 ```
 
 ### 1) Start GraphDB
