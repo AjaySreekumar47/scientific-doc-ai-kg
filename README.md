@@ -3,6 +3,8 @@
 ![GraphDB](https://img.shields.io/badge/GraphDB-knowledge%20graph-orange)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
+![CI](https://github.com/AjaySreekumar47/scientific-doc-ai-kg/actions/workflows/ci.yml/badge.svg)
+
 # Scientific Document AI + Knowledge Graph Pipeline (Layout-Aware + RDF/SPARQL + Serving)
 
 End-to-end pipeline for scientific PDFs:
@@ -70,6 +72,11 @@ pip install -r requirements.txt
 **Windows (PowerShell):**
 ```powershell
 .\scripts\dev.ps1
+
+**Linux/Mac:**
+```bash
+bash scripts/dev.sh
+```
 
 Swagger: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
