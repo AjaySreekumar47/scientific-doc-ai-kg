@@ -1,22 +1,19 @@
+from __future__ import annotations
+
 import os
+import tempfile
+import uuid
+from pathlib import Path
+import httpx
+
 from dotenv import load_dotenv
+from fastapi import FastAPI, File, UploadFile
+from fastapi.responses import FileResponse
+from pydantic import BaseModel
+
+from app.core.settings import settings 
 
 load_dotenv()
-
-from fastapi import FastAPI, UploadFile, File
-import httpx
-import uuid
-
-from pathlib import Path
-import tempfile
-from fastapi.responses import FileResponse
-
-# from app.pipelines.extract.run import extract_pymupdf_basic
-from app.core.settings import settings
-
-# from app.pipelines.kg.rdf_builder import build_rdf_from_document
-
-# from app.pipelines.kg.graphdb_client import upload_ttl_to_graphdb, sparql_query_graphdb
 
 GRAPHDB_BASE_URL = os.getenv("GRAPHDB_BASE_URL", "http://localhost:7200")
 GRAPHDB_REPO_ID = os.getenv("GRAPHDB_REPO_ID", "scientific-docs")
@@ -134,8 +131,6 @@ async def ingest_to_graphdb(file: UploadFile = File(...)):
         "triple_count": len(g),
     }
 
-
-from pydantic import BaseModel
 
 class SparqlRequest(BaseModel):
     query: str
