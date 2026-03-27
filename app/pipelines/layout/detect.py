@@ -7,7 +7,6 @@ import numpy as np
 from PIL import Image
 import fitz  # PyMuPDF
 
-import layoutparser as lp
 from layoutparser.models.paddledetection import PaddleDetectionLayoutModel
 
 

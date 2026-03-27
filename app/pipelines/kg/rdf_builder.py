@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-from rdflib import Graph, Namespace, URIRef, Literal
-from rdflib.namespace import RDF, RDFS, XSD
+from typing import List, Optional, Dict
+
+from rdflib import Graph, Namespace, Literal
+from rdflib.namespace import RDF, XSD
 
 from app.pipelines.extract.schema import ExtractionDocument
 
@@ -12,7 +14,10 @@ DOC = Namespace("http://example.org/doc/")
 PROV = Namespace("http://www.w3.org/ns/prov#")
 
 
-def build_rdf_from_document(doc: ExtractionDocument) -> Graph:
+def build_rdf_from_document(
+    doc: ExtractionDocument,
+    verified_claims: Optional[List[Dict]] = None,
+) -> Graph:
     g = Graph()
     g.bind("ex", EX)
     g.bind("doc", DOC)
@@ -57,6 +62,9 @@ def build_rdf_from_document(doc: ExtractionDocument) -> Graph:
         g.add((fig_uri, EX.x1, Literal(f.bbox_norm.x1)))
         g.add((fig_uri, EX.y1, Literal(f.bbox_norm.y1)))
 
+        if f.image_path:
+            g.add((fig_uri, EX.imagePath, Literal(f.image_path)))
+
         g.add((page_uri, EX.hasFigure, fig_uri))
 
         if f.caption_block_id:
@@ -74,13 +82,15 @@ def build_rdf_from_document(doc: ExtractionDocument) -> Graph:
         g.add((tbl_uri, EX.x1, Literal(t.bbox_norm.x1)))
         g.add((tbl_uri, EX.y1, Literal(t.bbox_norm.y1)))
 
+        if getattr(t, "image_path", None):
+            g.add((tbl_uri, EX.imagePath, Literal(t.image_path)))
+
         g.add((page_uri, EX.hasTable, tbl_uri))
 
         if t.caption_block_id:
             caption_uri = DOC[f"{doc.document_id}/block/{t.caption_block_id}"]
             g.add((tbl_uri, EX.hasCaptionBlock, caption_uri))
 
-        # Cells
         for cell in t.cells:
             cell_uri = DOC[f"{doc.document_id}/cell/{t.table_id}_{cell.row}_{cell.col}"]
             g.add((cell_uri, RDF.type, EX.TableCell))
@@ -89,5 +99,34 @@ def build_rdf_from_document(doc: ExtractionDocument) -> Graph:
             g.add((cell_uri, EX.text, Literal(cell.text or "")))
 
             g.add((tbl_uri, EX.hasCell, cell_uri))
+
+    # Verified claims only
+    if verified_claims:
+        for idx, claim in enumerate(verified_claims):
+            claim_uri = DOC[f"{doc.document_id}/claim/{idx}"]
+
+            g.add((claim_uri, RDF.type, EX.Claim))
+            g.add((claim_uri, EX.claimText, Literal(claim.get("text", ""))))
+            g.add((claim_uri, EX.claimType, Literal(claim.get("claim_type", "general_claim"))))
+            g.add(
+                (
+                    claim_uri,
+                    EX.verificationStatus,
+                    Literal(claim.get("verification_status", "unknown")),
+                )
+            )
+            g.add(
+                (
+                    claim_uri,
+                    EX.confidence,
+                    Literal(float(claim.get("confidence", 0.0)), datatype=XSD.float),
+                )
+            )
+
+            g.add((doc_uri, EX.hasClaim, claim_uri))
+
+            for block_id in claim.get("evidence_blocks", []):
+                block_uri = DOC[f"{doc.document_id}/block/{block_id}"]
+                g.add((claim_uri, EX.derivedFromBlock, block_uri))
 
     return g
